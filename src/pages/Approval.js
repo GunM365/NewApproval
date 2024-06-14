@@ -1,7 +1,7 @@
 // import logo from './logo.svg';
 import './Approval.css';
 import React from 'react';
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { initializeIcons } from "@fluentui/react";
 import { Input } from "@fluentui/react-components";
 import { FluentProvider, webLightTheme } from "@fluentui/react-components";
@@ -51,92 +51,37 @@ const useStyles = makeStyles({
   }
 });
 function App() {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(5);
+  const [currentPage, setCurrentPage] = useState(4);
+  const totalPages = 5;
   const styles = useStyles();
-  const [memoData, setMemoData] = useState([]);
-  const [filteredMemos, setFilteredMemos] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  // const [selectedStatus, setSelectedStatus] = useState("ทั้งหมด");
- 
-  const totalPages = Math.ceil(filteredMemos.length / itemsPerPage); 
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredMemos.slice(indexOfFirstItem, indexOfLastItem);
-
-  const handleClearSearch = () => {
-    setSearchQuery(""); // Clear the search query
-  };
-
-  //Fetch memoList from API
-  useEffect(() => {
-    const fetchData = async () => {
-        try {
-            const response = await fetch('/api/v2/memos', {
-              headers: {
-                  'x-api-key': process.env.REACT_APP_API_KEY
-              }
-          });
-            const data = await response.json();
-            setMemoData(data); // Update the state with fetched data
-        } catch (error) {
-            console.error("Error fetching data:", error);
-        }
-        
-    };
-
-    fetchData(); 
-}, []);
-
-useEffect(() => {
-  const filterMemos = () => {
-    let filtered = memoData;
-
-    // Filter by search query
-    if (searchQuery) {
-      filtered = filtered.filter(memo =>
-        memo.subject.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-
-    // Filter by status
-    // if (selectedStatus !== "ทั้งหมด") {
-    //   filtered = filtered.filter(memo =>
-    //     memo.status === selectedStatus
-    //   );
-    // }
-
-    setFilteredMemos(filtered);
-    setCurrentPage(1); // Reset to the first page when filters change
-  };
-
-  filterMemos(); // Call filterMemos whenever dependencies change
-}, [memoData, searchQuery]);
 
   return (
-    
     <FluentProvider theme={webLightTheme}>
-      
       <div className="adjust-page">
     <div className="flex-container">
       <div className="text">รอการอนุมัติ</div>
       <div className="box">
         <div className="clear-search">
-          <a onClick={handleClearSearch}>ล้างการค้นหา</a>
+          ล้างการค้นหา
         </div>
         <div className={styles.root}>
-          <Input placeholder="ค้นหารายการ" value={searchQuery}  input={{ style:{ fontFamily: "IBM Plex Sans Thai"}  }} onChange={(e) => {
-              setSearchQuery(e.target.value);
-            }}/>
+          <Input placeholder="ค้นหารายการ" input={{ style:{ fontFamily: "IBM Plex Sans Thai"}  }}/>
           </div>
-          
-          <div className={styles.root}>
+        <div className={styles.root}>
+        <Dropdown placeholder="ประเภทของเอกสาร" appearance="outline" button={{ style:{ fontFamily: "IBM Plex Sans Thai"}  }} listbox={{ style:{ fontFamily: "IBM Plex Sans Thai"}  }}>
+          <Option>แบบขออนุมัติภายนอก</Option>
+          <Option>แบบขออนุมัติภายใน</Option>
+          <Option>แบบขออนุมัติการซื้อ</Option>
+          <Option>เอกสารอัปโหลด</Option>
+          <Option>สัญญา</Option>
+        </Dropdown>
+        </div>
+        <div className={styles.root}>
           <DatePicker allowTextInput placeholder="ช่วงเวลา" root={{ style:{ fontFamily: "IBM Plex Sans Thai" }  }} appearance="outline"/>
         </div>
       </div>
-      
     </div>
-<></>
+
     <div className="flex-container">
       <div className="text1" style={{ marginTop: 50 }}>
         รายการอนุมัติ
@@ -150,9 +95,9 @@ useEffect(() => {
           <Option>ไม่อนุมัติ</Option>
         </Dropdown>
       </div>
-      
+
       {/* table */}
-      <Table data={currentItems} />
+      <Table />
 
       {/* Pagination */}
       <ResponsivePagination

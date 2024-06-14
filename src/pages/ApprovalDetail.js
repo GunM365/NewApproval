@@ -1,5 +1,5 @@
 import "./ApprovalDetail.css";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Select } from "@fluentui/react-components";
 import Sidebar from "../components/Sidebar";
 import ModalApprove from "../components/ModalApprove";
@@ -9,8 +9,7 @@ import ModalEditSuccess from "../components/ModalEditSuccess"
 import ModalReject from "../components/ModalReject";
 import ModalRejectSuccess from "../components/ModalRejectSuccess"
 import { FluentProvider, webLightTheme } from "@fluentui/react-components";
-import { useParams, Link } from "react-router-dom";
-import { saveAs } from 'file-saver';
+import { Link } from 'react-router-dom';
 // Icon
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import { IoReloadCircleOutline } from "react-icons/io5";
@@ -20,113 +19,71 @@ import { IoIosArrowForward } from "react-icons/io";
 import { GoDownload } from "react-icons/go";
 
 function ApprovalDetail() {
-  const { id } = useParams();
-  const [memoData, setMemoData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [showModalOne, setShowModalOne] = useState(false);
   const [showModalTwo, setShowModalTwo] = useState(false);
   const [showModalEditOne, setShowEditOne] = useState(false);
   const [showModalEditTwo, setShowEditTwo] = useState(false);
   const [showModalRejectOne, setShowRejectOne] = useState(false);
   const [showModalRejectTwo, setShowRejectTwo] = useState(false);
-  const [pdfData, setPdfData] = useState(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-        try {
-            const response = await fetch(`/api/v2/memos/${id}`, {
-              headers: {
-                  'x-api-key': process.env.REACT_APP_API_KEY
-              }
-          });
-            const data = await response.json();
-            setMemoData(data); // Update the state with fetched data
-        } catch (error) {
-            console.error("Error fetching data:", error);
-        }finally{
-          setIsLoading(false);
-        }  
-    };
-      
-    fetchData();  
-}, [id]);
-useEffect(() => {
-  const fetchData = async () => {
-      try {
-          // ... (fetch memoData logic)
-
-          // Fetch PDF data
-          const pdfResponse = await fetch(`/api/v2/memos/${id}/download-pdf/`, {
-              headers: {
-                  'x-api-key': process.env.REACT_APP_API_KEY
-              }
-          });
-          const pdfBlob = await pdfResponse.blob(); // Get the PDF as a Blob
-          setPdfData(URL.createObjectURL(pdfBlob)); // Create a URL for the Blob
-      } catch (error) {
-          // ... (error handling)
-      }
+  const handleOpenModalApprove = () => {
+    setShowModalOne(true);
   };
 
-  fetchData();
-}, [id]);
-
-const handleDownload = async () => {
-  console.log("sorry")
-  try {
-    const response = await fetch(pdfData); 
-    const blob = await response.blob();
-    saveAs(blob, `memo_${id}.pdf`); // Save the PDF with a dynamic name
-  } catch (error) {
-    console.error("Error downloading PDF:", error);
-    // Handle the error (e.g., show a notification to the user)
-  }
-};
-
-  const handleModalApprove = () => {
-    setShowModalOne(!showModalOne);
+  const handleCloseModalApprove = () => {
+    setShowModalOne(false);
   };
 
-
-  const handleModalApproveSuccess = () => {
-    setShowModalTwo(!showModalTwo);
-    if(showModalTwo)
-    handleModalApprove(); // ปิด ModalOne เมื่อเปิด ModalTwo
+  const handleOpenModalApproveSuccess = () => {
+    setShowModalTwo(true);
+    handleCloseModalApprove(); // ปิด ModalOne เมื่อเปิด ModalTwo
   };
 
+  const handleCloseModalApproveSuccess = () => {
+    setShowModalTwo(false);
+  };
 
   //Modal Edit
-  const handleModalEdit = () => {
-    setShowEditOne(!showModalEditOne);
+  const handleOpenModalEdit = () => {
+    setShowEditOne(true);
   };
 
+  const handleCloseModalEdit = () => {
+    setShowEditOne(false);
+  };
 
-  const handleModalEditSuccess = () => {
-    setShowEditTwo(!showModalEditTwo);
-    if(showModalEditTwo)
-    handleModalEdit(); // ปิด ModalOne เมื่อเปิด ModalTwo
+  const handleOpenModalEditSuccess = () => {
+    setShowEditTwo(true);
+    handleCloseModalEdit(); // ปิด ModalOne เมื่อเปิด ModalTwo
+  };
+
+  const handleCloseModalEditSuccess = () => {
+    setShowEditTwo(false);
   };
 
   //Model Reject
-  const handleModalReject = () => {
-    setShowRejectOne(!showModalRejectOne);
+  const handleOpenModalReject = () => {
+    setShowRejectOne(true);
   };
 
-
-  const handleModalRejectSuccess = () => {
-    setShowRejectTwo(!showModalRejectTwo);
-    if(showModalRejectTwo)
-    handleModalReject(); // ปิด ModalOne เมื่อเปิด ModalTwo
+  const handleCloseModalReject = () => {
+    setShowRejectOne(false);
   };
 
-  
+  const handleOpenModalRejectSuccess = () => {
+    setShowRejectTwo(true);
+    handleCloseModalReject(); // ปิด ModalOne เมื่อเปิด ModalTwo
+  };
+
+  const handleCloseModalRejectSuccess = () => {
+    setShowRejectTwo(false);
+  };
   //
   return (
     <FluentProvider theme={webLightTheme}>
       <div className="container">
         {/* back Page arrow left */}
-        <Link to = {"/"} style={{color: "#242424"}}>
+        <Link Link to = {"/"} style={{color: "#242424"}}>
         <button className="backPage">
           <svg
             width="24"
@@ -151,65 +108,57 @@ const handleDownload = async () => {
 
               {/* ปุ่มไม่อนุมัติ */}
 
-              <button className="status-button not-approved" onClick={handleModalReject}>
+              <button className="status-button not-approved" onClick={handleOpenModalReject}>
                 <IoIosCloseCircleOutline className="icon-move" />
                 ไม่อนุมัติ
               </button>
               {showModalRejectOne && ( // แสดง ModalOne เมื่อ showModalOne เป็น true
-                <ModalReject onClose={handleModalReject}
-                  onConfirm={handleModalRejectSuccess}
+                <ModalReject onClose={handleCloseModalReject}
+                  onConfirm={handleOpenModalRejectSuccess}
                 />
               )}
               {showModalRejectTwo && ( // แสดง ModalTwo เมื่อ showModalTwo เป็น true
-                <ModalRejectSuccess onClose={handleModalRejectSuccess}/>
+                <ModalRejectSuccess onClose={handleCloseModalRejectSuccess}/>
               )}
 
               {/* ปุ่มแก้ไข */}
 
-              <button className="status-button pending" onClick={handleModalEdit}>
+              <button className="status-button pending" onClick={handleOpenModalEdit}>
                 <IoReloadCircleOutline className="icon-move" />
                 แก้ไข
               </button>
               {showModalEditOne && ( // แสดง ModalOne เมื่อ showModalOne เป็น true
-                <ModalEdit onClose={handleModalEdit}
-                  onConfirm={handleModalEditSuccess}
+                <ModalEdit onClose={handleCloseModalEdit}
+                  onConfirm={handleOpenModalEditSuccess}
                 />
               )}
               {showModalEditTwo && ( // แสดง ModalTwo เมื่อ showModalTwo เป็น true
-                <ModalEditSuccess onClose={handleModalEditSuccess}/>
+                <ModalEditSuccess onClose={handleCloseModalEditSuccess}/>
               )}
 
 
               {/* ปุ่มอนุมัติ */}
 
-              <button className="status-button approved" onClick={handleModalApprove}>
-                {/* <button className="status-button approved" onClick={() => setModal(true)}> */}
+              <button className="status-button approved" onClick={handleOpenModalApprove}>
+                {/* <button className="status-button approved" onClick={() => setModalOpen(true)}> */}
                 <IoCheckmarkCircleOutline className="icon-move" />
                 อนุมัติ
               </button>
-              {/* {isModal && <Modal onConfirm={handleConfirm} onCancel={handleCancel} />} */}
+              {/* {isModalOpen && <Modal onConfirm={handleConfirm} onCancel={handleCancel} />} */}
               {showModalOne && ( // แสดง ModalOne เมื่อ showModalOne เป็น true
-                <ModalApprove onClose={handleModalApprove}
-                  onConfirm={handleModalApproveSuccess}
+                <ModalApprove onClose={handleCloseModalApprove}
+                  onConfirm={handleOpenModalApproveSuccess}
                 />
               )}
               {showModalTwo && ( // แสดง ModalTwo เมื่อ showModalTwo เป็น true
-                <ModalApproveSuccess onClose={handleModalApproveSuccess}/>
+                <ModalApproveSuccess onClose={handleCloseModalApproveSuccess}/>
               )}
 
 
             </div>
             <div className="order">
-              <div className="orderAprrove">
-                {isLoading ? (
-                  <p>Loading...</p>
-                ) : memoData && memoData.loa && memoData.loa.loaLevel ? (
-                <>ลำดับอนุมัติ: X / {memoData.loa.loaLevel.length}</>
-              ) : (
-                <p>No approval details available.</p>
-            )}
-          </div>
-        </div>
+              <div className="orderAprrove">ลำดับการอนุมัติ 1 / 2</div>
+            </div>
 
             <div className="select-page">
               <button className="back-page-doc">
@@ -226,28 +175,16 @@ const handleDownload = async () => {
               <button className="forward-page-doc">
                 <IoIosArrowForward style={{ marginLeft: "10" }} />
               </button>
-              <button className="download" onClick={handleDownload}>
-                <GoDownload style={{ marginRight: "10" }}  />
+              <button className="download">
+                <GoDownload style={{ marginRight: "10" }} />
                 ดาวน์โหลด
               </button>
             </div>
-            <div className="boxDoc">
-            {pdfData ? (
-              <iframe src={pdfData} title="Memo PDF" width="100%" height="600px" />
-            ) : (
-              <p>Loading PDF...</p> // Or an appropriate loading indicator
-          )}
-            </div>
+            <div className="boxDoc">แสดงไฟล์เอกสาร</div>
           </div>
-          
           <div className="columnDetail">
-            {console.log(memoData)}
-          {memoData && <Sidebar data={memoData} />}
+            <Sidebar />
           </div>
-          
-
-
-
         </div>
       </div>
     </FluentProvider>

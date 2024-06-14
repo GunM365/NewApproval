@@ -14,7 +14,7 @@ function App() {
       <Routes>
         <Route>
           <Route index element={<Approval />}/>
-          <Route path='/ApprovalDetail/:id' element={<ApprovalDetail />} />
+          <Route path='/ApprovalDetail' element={<ApprovalDetail />} />
           {/* <Route path="blogs" element={<Blogs />} /> */}
         </Route>
       </Routes>
