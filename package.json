@@ -11,6 +11,7 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+    "file-saver": "^2.0.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-icons": "^5.2.1",
@@ -19,6 +20,7 @@
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
+  "proxy": "https://m365-dev.ememo-codium-uat.com",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -42,5 +44,12 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@azure/static-web-apps-cli": "^1.1.9",
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
   }
 }
